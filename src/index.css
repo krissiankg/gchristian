@@ -1,0 +1,162 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* ========== DARK (default) ========== */
+  :root {
+    --background: 220 20% 3%;
+    --foreground: 210 20% 92%;
+    --card: 220 20% 7%;
+    --card-foreground: 210 20% 92%;
+    --popover: 220 20% 7%;
+    --popover-foreground: 210 20% 92%;
+    --primary: 175 80% 50%;
+    --primary-glow: 260 70% 65%;
+    --primary-foreground: 220 20% 3%;
+    --secondary: 220 15% 12%;
+    --secondary-foreground: 210 20% 92%;
+    --muted: 220 15% 15%;
+    --muted-foreground: 220 10% 50%;
+    --accent: 175 80% 50%;
+    --accent-foreground: 220 20% 3%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 220 15% 14%;
+    --input: 220 15% 14%;
+    --ring: 175 80% 50%;
+    --radius: 0.25rem;
+    --font-display: "Montserrat", sans-serif;
+    --font-body: "Poppins", sans-serif;
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(175 80% 50%) 0%,
+      hsl(200 85% 55%) 100%
+    );
+    --shadow-glow: 0 0 60px hsl(175 80% 50% / 0.15);
+    --god-rays: 175 90% 70%;
+    --logo-filter: brightness(0) invert(1);
+  }
+
+  /* ========== LIGHT ========== */
+  :root.light {
+    --background: 210 25% 96%;
+    --foreground: 220 20% 10%;
+    --card: 210 20% 93%;
+    --card-foreground: 220 20% 10%;
+    --popover: 210 20% 95%;
+    --popover-foreground: 220 20% 10%;
+    --primary: 175 80% 38%;
+    --primary-glow: 260 70% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 15% 88%;
+    --secondary-foreground: 220 15% 15%;
+    --muted: 210 12% 90%;
+    --muted-foreground: 220 10% 40%;
+    --accent: 175 80% 38%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 12% 85%;
+    --input: 210 12% 85%;
+    --ring: 175 80% 38%;
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(175 80% 38%) 0%,
+      hsl(200 85% 42%) 100%
+    );
+    --shadow-glow: 0 0 60px hsl(175 80% 38% / 0.1);
+    --god-rays: 175 90% 70%;
+    --logo-filter: brightness(0);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  html,
+  body {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    min-height: 100svh;
+  }
+
+  #root {
+    min-height: 100svh;
+    overflow-x: clip;
+  }
+
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    overflow-wrap: anywhere;
+  }
+
+  a,
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-subtle {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--foreground)) 0%,
+      hsl(var(--foreground)) 40%,
+      hsl(var(--primary)) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-accent {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--primary-glow)) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glow {
+    box-shadow: var(--shadow-glow);
+  }
+}

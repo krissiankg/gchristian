@@ -115,8 +115,8 @@ export class GodRaysScene {
     private container: HTMLElement,
     color = "#ff5500",
   ) {
-    const w = container.clientWidth;
-    const h = container.clientHeight;
+    const w = Math.max(container.clientWidth, 1);
+    const h = Math.max(container.clientHeight, 1);
 
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(90, w / h, 1, 1000);
@@ -130,7 +130,11 @@ export class GodRaysScene {
     });
     this.renderer.setSize(w, h);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-    container.appendChild(this.renderer.domElement);
+    const canvas = this.renderer.domElement;
+    canvas.style.display = "block";
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    container.appendChild(canvas);
 
     this.timer = new THREE.Timer();
 
@@ -309,32 +313,28 @@ export class GodRaysScene {
 
   private buildPerspectiveLines(): void {
     const isMobile = this.container.clientWidth < 768;
-    PERSP_LINES.forEach((cfg, index) => {
-      let curve: THREE.CatmullRomCurve3;
-      if (isMobile) {
-        // Vertical ribbons: bottom → center (closer) → top, spread evenly by index
-        const count = PERSP_LINES.length;
-        const x = (index - (count - 1) / 2) * 0.9;
-        const p0 = new THREE.Vector3(x, -22, 3);
-        const p1 = new THREE.Vector3(x, 0, 14);
-        const p2 = new THREE.Vector3(x, 22, 3);
-        curve = new THREE.CatmullRomCurve3([p0, p1, p2]);
-      } else {
-        const { nx, ny } = cfg;
-        const p0 = this.buttonP0.clone();
-        const p1 = new THREE.Vector3(nx * 0.4 + 0.5, ny + 8.0, 18.0);
-        const p2 = new THREE.Vector3(nx * 0.12, ny + 15.0, 5.0);
-        curve = new THREE.CatmullRomCurve3([
-          p0,
-          p1,
-          p2,
-          PERSP_VP.clone(),
-          PERSP_TOP.clone(),
-        ]);
-      }
+    PERSP_LINES.forEach((cfg) => {
+      // Same spiral paths on mobile & desktop so letter ribbons stay visible
+      const { nx, ny } = cfg;
+      const p0 = this.buttonP0.clone();
+      // On narrow screens, pull the near end slightly inward so text stays in frame
+      const nearScale = isMobile ? 0.55 : 1;
+      const p1 = new THREE.Vector3(
+        nx * 0.4 * nearScale + 0.5,
+        ny + (isMobile ? 6.0 : 8.0),
+        18.0,
+      );
+      const p2 = new THREE.Vector3(nx * 0.12 * nearScale, ny + (isMobile ? 12.0 : 15.0), 5.0);
+      const curve = new THREE.CatmullRomCurve3([
+        p0,
+        p1,
+        p2,
+        PERSP_VP.clone(),
+        PERSP_TOP.clone(),
+      ]);
 
-      // text ribbon
-      const HW = 0.08;
+      // text ribbon — slightly thicker on mobile for readability
+      const HW = isMobile ? 0.11 : 0.08;
       const texH = isMobile ? 128 : 256;
       const tex = this.makePerspTextTexture(cfg.text, isMobile);
 
@@ -343,7 +343,7 @@ export class GodRaysScene {
       const TEXT_ASPECT = 0.85;
       tex.repeat.x = ((arcLen * texH) / (canvasW * HW * 2)) * TEXT_ASPECT;
 
-      const ribbon = this.makePerspRibbon(curve, tex, isMobile);
+      const ribbon = this.makePerspRibbon(curve, tex, isMobile, HW);
       this.scene.add(ribbon);
       this.perspRibbons.push({ mesh: ribbon, speed: cfg.speed });
     });
@@ -414,9 +414,9 @@ export class GodRaysScene {
     curve: THREE.CatmullRomCurve3,
     texture: THREE.CanvasTexture,
     isMobile = false,
+    HW = 0.08,
   ): THREE.Mesh {
     const SEGS = isMobile ? 80 : 320;
-    const HW = 0.08;
     const Z_AXIS = new THREE.Vector3(0, 0, 1);
 
     const positions: number[] = [];
@@ -560,9 +560,12 @@ export class GodRaysScene {
 
   // ── resize ────────────────────────────────────────────────────────────
   resize(width: number, height: number): void {
+    if (width < 2 || height < 2) return;
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
+    this.renderer.domElement.style.width = "100%";
+    this.renderer.domElement.style.height = "100%";
     this.composer.setSize(width, height);
     this.buildOccluder();
     this.rebuildPerspectiveLines();

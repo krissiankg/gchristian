@@ -103,10 +103,14 @@
 
   img,
   video,
-  canvas,
   svg {
     max-width: 100%;
     height: auto;
+  }
+
+  /* Do not force height:auto on canvas — it collapses Three.js / WebGL surfaces */
+  canvas {
+    max-width: none;
   }
 
   h1,

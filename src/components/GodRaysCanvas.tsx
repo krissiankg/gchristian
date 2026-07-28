@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { GodRaysScene } from '@/three/GodRaysScene';
+import { useEffect, useRef } from "react";
+import { GodRaysScene } from "@/three/GodRaysScene";
 
 interface GodRaysCanvasProps {
   color?: string;
@@ -8,91 +8,120 @@ interface GodRaysCanvasProps {
 }
 
 function resolveColor(colorExpr: string, parent: HTMLElement = document.body): string {
-  if (!colorExpr.includes('var(')) return colorExpr;
-  const el = document.createElement('span');
+  if (!colorExpr.includes("var(")) return colorExpr;
+  const el = document.createElement("span");
   el.style.color = colorExpr;
   parent.appendChild(el);
   const computed = window.getComputedStyle(el).color;
   parent.removeChild(el);
-  return computed || '#ff5500';
+  return computed || "#ff5500";
 }
 
 const GodRaysCanvas = ({
-  color = 'hsl(var(--god-rays))',
-  className = 'w-full h-full',
+  color = "hsl(var(--god-rays))",
+  className = "w-full h-full",
   targetRef,
 }: GodRaysCanvasProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<GodRaysScene | null>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const container = containerRef.current;
+    if (!container) return;
 
-    const scene = new GodRaysScene(containerRef.current, resolveColor(color, containerRef.current));
-    sceneRef.current = scene;
-    scene.animate();
+    let disposed = false;
+    let waitRaf = 0;
+    let measureRaf = 0;
+    let resizeObserver: ResizeObserver | null = null;
+    let themeObserver: MutationObserver | null = null;
 
     const measureTarget = () => {
-      if (!targetRef?.current || !containerRef.current) return;
-      const cr = containerRef.current.getBoundingClientRect();
+      if (!targetRef?.current || !sceneRef.current) return;
+      const cr = container.getBoundingClientRect();
       const tr = targetRef.current.getBoundingClientRect();
+      if (cr.width < 2 || cr.height < 2) return;
 
-      const x = (tr.left - cr.left) / cr.width;
-      const y = (tr.top  - cr.top)  / cr.height;
-      const w = tr.width  / cr.width;
-      const h = tr.height / cr.height;
-
-      sceneRef.current?.setButtonRect({
-       x, y, w, h,
+      sceneRef.current.setButtonRect({
+        x: (tr.left - cr.left) / cr.width,
+        y: (tr.top - cr.top) / cr.height,
+        w: tr.width / cr.width,
+        h: tr.height / cr.height,
       });
     };
 
-    const rafId = requestAnimationFrame(measureTarget);
-
     const handleResize = () => {
-      if (!containerRef.current || !sceneRef.current) return;
-      sceneRef.current.resize(
-        containerRef.current.clientWidth,
-        containerRef.current.clientHeight,
-      );
+      if (!sceneRef.current) return;
+      sceneRef.current.resize(container.clientWidth, container.clientHeight);
       measureTarget();
     };
 
-    const resizeObserver = new ResizeObserver(measureTarget);
-    if (targetRef?.current) resizeObserver.observe(targetRef.current);
-    if (containerRef.current) resizeObserver.observe(containerRef.current);
-
     const handleMouseMove = (e: MouseEvent) => {
-      const nx =  (e.clientX / window.innerWidth)  * 2 - 1;
+      const nx = (e.clientX / window.innerWidth) * 2 - 1;
       const ny = -((e.clientY / window.innerHeight) * 2 - 1);
       sceneRef.current?.setPointer(nx, ny);
     };
 
     const handleScroll = () => sceneRef.current?.setScroll(window.scrollY);
 
-    const observer = new MutationObserver(() => {
-      sceneRef.current?.refreshTheme();
-      sceneRef.current?.setColor(resolveColor(color, containerRef.current ?? document.body));
-    });
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+    const attachListeners = () => {
+      resizeObserver = new ResizeObserver(() => {
+        handleResize();
+      });
+      resizeObserver.observe(container);
+      if (targetRef?.current) resizeObserver.observe(targetRef.current);
 
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('scroll', handleScroll, { passive: true });
+      themeObserver = new MutationObserver(() => {
+        sceneRef.current?.refreshTheme();
+        sceneRef.current?.setColor(resolveColor(color, container));
+      });
+      themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class", "data-theme"],
+      });
+
+      window.addEventListener("resize", handleResize);
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("scroll", handleScroll, { passive: true });
+    };
+
+    const start = () => {
+      if (disposed || sceneRef.current) return;
+      // Wait until layout has real size (common on mobile first paint)
+      if (container.clientWidth < 2 || container.clientHeight < 2) {
+        waitRaf = requestAnimationFrame(start);
+        return;
+      }
+
+      const scene = new GodRaysScene(container, resolveColor(color, container));
+      sceneRef.current = scene;
+      scene.animate();
+      attachListeners();
+      measureRaf = requestAnimationFrame(measureTarget);
+    };
+
+    start();
 
     return () => {
-      cancelAnimationFrame(rafId);
-      resizeObserver.disconnect();
-      observer.disconnect();
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('scroll', handleScroll);
+      disposed = true;
+      cancelAnimationFrame(waitRaf);
+      cancelAnimationFrame(measureRaf);
+      resizeObserver?.disconnect();
+      themeObserver?.disconnect();
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("scroll", handleScroll);
       sceneRef.current?.dispose();
       sceneRef.current = null;
     };
   }, [color, targetRef]);
 
-  return <div ref={containerRef} className={className} />;
+  return (
+    <div
+      ref={containerRef}
+      className={className}
+      style={{ width: "100%", height: "100%" }}
+    />
+  );
 };
 
 export default GodRaysCanvas;

@@ -21,8 +21,8 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-background/80" />
       </div>
 
-      <div className="absolute inset-y-0 left-0 right-0 pointer-events-none overflow-hidden">
-        <GodRaysCanvas targetRef={buttonRef} />
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-[1]">
+        <GodRaysCanvas targetRef={buttonRef} className="absolute inset-0 w-full h-full" />
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10 w-full">

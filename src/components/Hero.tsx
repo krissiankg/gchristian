@@ -21,7 +21,7 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-background/80" />
       </div>
 
-      <div className="absolute inset-y-0 left-0 right-0 pointer-events-none overflow-hidden hidden md:block">
+      <div className="absolute inset-y-0 left-0 right-0 pointer-events-none overflow-hidden">
         <GodRaysCanvas targetRef={buttonRef} />
       </div>
 

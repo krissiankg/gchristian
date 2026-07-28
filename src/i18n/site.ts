@@ -25,5 +25,5 @@ export const SITE = {
   linkedin: "https://www.linkedin.com/in/christianguegueligue/",
   github: "https://github.com/krissiankg",
   agency: "https://guelichweb.online/fr",
-  experienceYears: "9+",
+  experienceYears: "11+",
 } as const;

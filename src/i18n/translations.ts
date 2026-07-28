@@ -75,6 +75,8 @@ const fr = {
     filterVideo: "Vidéo",
     watchVideo: "Voir la vidéo",
     close: "Fermer",
+    viewImage: "Agrandir",
+    of: "sur",
   },
   services: {
     label: "Services",
@@ -136,10 +138,6 @@ const fr = {
         skills: ["Vercel", "Netlify", "AWS EC2/S3", "VPS Linux", "MySQL", "GitHub"],
       },
     ],
-  },
-  testimonials: {
-    label: "Témoignages",
-    title: "Ce qu'on dit du travail",
   },
   contact: {
     label: "Contact",
@@ -236,6 +234,8 @@ const en: TranslationTree = {
     filterVideo: "Video",
     watchVideo: "Watch video",
     close: "Close",
+    viewImage: "Enlarge",
+    of: "of",
   },
   services: {
     label: "Services",
@@ -297,10 +297,6 @@ const en: TranslationTree = {
         skills: ["Vercel", "Netlify", "AWS EC2/S3", "Linux VPS", "MySQL", "GitHub"],
       },
     ],
-  },
-  testimonials: {
-    label: "Testimonials",
-    title: "Kind Words",
   },
   contact: {
     label: "Contact",

@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Play, X } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Play, Search, X } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import RevealImage from "@/components/RevealImage";
 import Footer from "@/components/Footer";
@@ -8,11 +8,18 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { usePortfolio } from "@/hooks/usePortfolio";
 import type { PortfolioItem, PortfolioKind } from "@/data/portfolioTypes";
 
+type LightboxState = {
+  images: string[];
+  index: number;
+  title: string;
+} | null;
+
 const ProjectsListing = () => {
   const { t } = useLanguage();
   const { data, loading, error } = usePortfolio();
   const [filter, setFilter] = useState<PortfolioKind>("web");
   const [activeVideo, setActiveVideo] = useState<PortfolioItem | null>(null);
+  const [lightbox, setLightbox] = useState<LightboxState>(null);
 
   const filters: { id: PortfolioKind; label: string; count: number }[] = [
     { id: "web", label: t.projects.filterWeb, count: data.web.length },
@@ -25,6 +32,42 @@ const ProjectsListing = () => {
     if (filter === "graphic") return data.graphic;
     return data.video;
   }, [data, filter]);
+
+  useEffect(() => {
+    if (!lightbox) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightbox(null);
+      if (e.key === "ArrowRight") {
+        setLightbox((prev) =>
+          prev
+            ? { ...prev, index: (prev.index + 1) % prev.images.length }
+            : prev,
+        );
+      }
+      if (e.key === "ArrowLeft") {
+        setLightbox((prev) =>
+          prev
+            ? {
+                ...prev,
+                index: (prev.index - 1 + prev.images.length) % prev.images.length,
+              }
+            : prev,
+        );
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [lightbox]);
+
+  const openGraphic = (project: PortfolioItem, imageIndex = 0) => {
+    const images = (project.images.length ? project.images : [project.image]).filter(Boolean);
+    if (!images.length) return;
+    setLightbox({ images, index: imageIndex, title: project.title });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -66,7 +109,53 @@ const ProjectsListing = () => {
             <p className="font-body text-sm text-muted-foreground py-20 text-center">{t.projects.empty}</p>
           )}
 
-          {!loading && !error && items.length > 0 && (
+          {/* Graphic gallery */}
+          {!loading && !error && filter === "graphic" && items.length > 0 && (
+            <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 sm:gap-5 space-y-4 sm:space-y-5">
+              {items.map((project, i) => {
+                const cover = project.image || project.images[0];
+                if (!cover) return null;
+                return (
+                  <button
+                    key={project.id}
+                    type="button"
+                    onClick={() => openGraphic(project, 0)}
+                    className="group relative break-inside-avoid w-full text-left overflow-hidden border border-border/60 bg-card/40 opacity-0 animate-fade-up focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    style={{ animationDelay: `${i * 0.06}s` }}
+                  >
+                    <img
+                      src={cover}
+                      alt={project.title}
+                      className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="font-body text-[10px] tracking-widest uppercase text-primary mb-1">
+                            {project.category}
+                          </p>
+                          <h3 className="font-display text-sm sm:text-base font-semibold text-foreground truncate">
+                            {project.title}
+                          </h3>
+                        </div>
+                        <span className="shrink-0 inline-flex items-center justify-center w-10 h-10 border border-primary/40 bg-primary/15 text-primary">
+                          <Search className="w-4 h-4" />
+                        </span>
+                      </div>
+                      <p className="mt-2 font-body text-[10px] tracking-widest uppercase text-muted-foreground">
+                        {t.projects.viewImage}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Web / Video grids */}
+          {!loading && !error && filter !== "graphic" && items.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10">
               {items.map((project, i) => {
                 const isVideo = project.kind === "video";
@@ -169,6 +258,77 @@ const ProjectsListing = () => {
                   {t.projects.empty}
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-[110] bg-black/90 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6"
+          onClick={() => setLightbox(null)}
+        >
+          <button
+            type="button"
+            className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 p-2 text-white/70 hover:text-white"
+            onClick={() => setLightbox(null)}
+            aria-label={t.projects.close}
+          >
+            <X size={22} />
+          </button>
+
+          {lightbox.images.length > 1 && (
+            <>
+              <button
+                type="button"
+                className="absolute left-2 sm:left-6 z-20 p-2 text-white/70 hover:text-white"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLightbox((prev) =>
+                    prev
+                      ? {
+                          ...prev,
+                          index: (prev.index - 1 + prev.images.length) % prev.images.length,
+                        }
+                      : prev,
+                  );
+                }}
+                aria-label="Previous"
+              >
+                <ChevronLeft size={28} />
+              </button>
+              <button
+                type="button"
+                className="absolute right-2 sm:right-6 z-20 p-2 text-white/70 hover:text-white"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLightbox((prev) =>
+                    prev
+                      ? { ...prev, index: (prev.index + 1) % prev.images.length }
+                      : prev,
+                  );
+                }}
+                aria-label="Next"
+              >
+                <ChevronRight size={28} />
+              </button>
+            </>
+          )}
+
+          <div
+            className="relative max-w-5xl w-full max-h-[85svh] flex flex-col items-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={lightbox.images[lightbox.index]}
+              alt={lightbox.title}
+              className="max-h-[75svh] w-auto max-w-full object-contain shadow-2xl border border-white/10"
+            />
+            <div className="mt-4 text-center px-4">
+              <p className="font-display text-sm sm:text-base text-white font-semibold">{lightbox.title}</p>
+              <p className="font-body text-[10px] tracking-widest uppercase text-white/50 mt-1">
+                {lightbox.index + 1} {t.projects.of} {lightbox.images.length}
+              </p>
             </div>
           </div>
         </div>

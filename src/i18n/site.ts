@@ -18,8 +18,8 @@ export const SITE = {
   whatsapp: "+229 66 36 87 05",
   whatsappHref: "https://wa.me/22966368705",
   location: {
-    fr: "Abomey-Calavi, Bénin",
-    en: "Abomey-Calavi, Benin",
+    fr: "Disponible en remote / International",
+    en: "Worldwide Remote",
   },
   website: "https://gchristian.online",
   linkedin: "https://www.linkedin.com/in/christianguegueligue/",

@@ -13,7 +13,7 @@ const fr = {
     hi: "Bonjour, je suis",
     name: "Christian GUEGUELIGUE",
     subtitle:
-      "Consultant freelance, développeur full-stack et expert en automatisation IA. Je conçois des sites, apps, SaaS et workflows sur-mesure — basé à Abomey-Calavi, Bénin.",
+      "Full-Stack Engineer, AI Automation Architect & Vibe Coder ⚡. Je conçois des plateformes web, micro-SaaS et workflows intelligents à la vitesse de l'éclair.",
     cta: "Voir les projets",
     yearsLabel: "ans d'expérience",
     photoAlt: "Portrait de Christian GUEGUELIGUE",
@@ -127,7 +127,7 @@ const fr = {
       },
       {
         label: "Automatisation & IA",
-        skills: ["n8n", "Make", "Antigravity", "Prompt Engineering", "API Integration", "Chatbots"],
+        skills: ["Cursor", "Antigravity", "n8n", "Make", "Prompt Engineering", "API Integration", "Chatbots"],
       },
       {
         label: "Design & Multimédia",
@@ -145,7 +145,7 @@ const fr = {
     line2: "ensemble",
     subtitle:
       "Un site, une app, une automatisation ou un produit digital ? Parlons de votre projet.",
-    location: "Abomey-Calavi, Bénin",
+    location: "Disponible mondialement (Remote)",
   },
   footer: {
     rights: "© 2026 Christian GUEGUELIGUE. Conçu avec exigence.",
@@ -172,7 +172,7 @@ const en: TranslationTree = {
     hi: "Hi, I'm",
     name: "Christian GUEGUELIGUE",
     subtitle:
-      "Freelance consultant, full-stack developer and AI automation expert. I build websites, apps, SaaS platforms and custom workflows — based in Abomey-Calavi, Benin.",
+      "Full-Stack Engineer, AI Automation Architect & Vibe Coder ⚡. Building modern web platforms, intelligent workflows and scalable micro-SaaS at light speed.",
     cta: "View Projects",
     yearsLabel: "years experience",
     photoAlt: "Portrait of Christian GUEGUELIGUE",
@@ -286,7 +286,7 @@ const en: TranslationTree = {
       },
       {
         label: "Automation & AI",
-        skills: ["n8n", "Make", "Antigravity", "Prompt Engineering", "API Integration", "Chatbots"],
+        skills: ["Cursor", "Antigravity", "n8n", "Make", "Prompt Engineering", "API Integration", "Chatbots"],
       },
       {
         label: "Design & Media",
@@ -304,7 +304,7 @@ const en: TranslationTree = {
     line2: "together",
     subtitle:
       "Need a website, an app, an automation or a digital product? Let's talk about your project.",
-    location: "Abomey-Calavi, Benin",
+    location: "Available Worldwide (Remote)",
   },
   footer: {
     rights: "© 2026 Christian GUEGUELIGUE. Built with craft.",

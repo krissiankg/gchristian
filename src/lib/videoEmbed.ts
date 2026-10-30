@@ -9,7 +9,7 @@ const MUTING_PARAMS = ["muted", "mute", "background"];
 export function normalizeVideoSrc(raw: string): string {
   let url: URL;
   try {
-    url = new URL(raw.trim().replace(/&amp;/g, "&"));
+    url = new URL(raw.trim().replace(/&amp;/g, "&").replace(/^\/\//, "https://"));
   } catch {
     return raw;
   }

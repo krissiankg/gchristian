@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ChevronLeft, ChevronRight, Play, Search, X } from "lucide-react";
 import Navbar from "@/components/Navbar";
@@ -8,6 +8,49 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { usePortfolio } from "@/hooks/usePortfolio";
 import type { PortfolioItem, PortfolioKind } from "@/data/portfolioTypes";
 import { normalizeVideoEmbed, normalizeVideoSrc, VIDEO_IFRAME_ALLOW } from "@/lib/videoEmbed";
+import { getMegaThumbnail } from "@/lib/megaThumbnail";
+
+/** Cover image, falling back to the video's own Mega thumbnail when none is set. */
+const ProjectCover = ({ project, delay }: { project: PortfolioItem; delay: number }) => {
+  const megaUrl = !project.image && project.kind === "video" ? project.videoUrl || project.live : "";
+  const ref = useRef<HTMLDivElement>(null);
+  const [nearViewport, setNearViewport] = useState(false);
+  const [thumbnail, setThumbnail] = useState("");
+
+  // Only fetch Mega thumbnails for cards about to scroll into view.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !megaUrl?.includes("mega.nz")) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setNearViewport(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "300px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [megaUrl]);
+
+  useEffect(() => {
+    if (!nearViewport || !megaUrl) return;
+    let alive = true;
+    getMegaThumbnail(megaUrl).then((url) => {
+      if (alive && url) setThumbnail(url);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [nearViewport, megaUrl]);
+
+  return (
+    <div ref={ref}>
+      <RevealImage src={project.image || thumbnail} alt={project.title} className="w-full aspect-video" delay={delay} />
+    </div>
+  );
+};
 
 type LightboxState = {
   images: string[];
@@ -163,12 +206,7 @@ const ProjectsListing = () => {
                 const card = (
                   <>
                     <div className="overflow-hidden border border-border/50 mb-4 relative">
-                      <RevealImage
-                        src={project.image}
-                        alt={project.title}
-                        className="w-full aspect-video"
-                        delay={i * 0.05}
-                      />
+                      <ProjectCover project={project} delay={i * 0.05} />
                       {isVideo && (
                         <div className="absolute inset-0 flex items-center justify-center bg-background/20">
                           <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground">

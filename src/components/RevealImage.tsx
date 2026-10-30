@@ -29,7 +29,8 @@ const RevealImage = ({ src, alt, className = "", delay = 0 }: RevealImageProps) 
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+    // Re-observe when the placeholder is swapped for a real image (async covers).
+  }, [src]);
 
   const totalDelay = delay + randomDelay.current;
   const tan = Math.tan(angle.current * Math.PI / 180);

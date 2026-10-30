@@ -82,6 +82,7 @@ export function getMegaThumbnail(url: string): Promise<string | null> {
   if (!pending) {
     pending = loadThumbnail(url).catch((err) => {
       console.warn("Mega thumbnail unavailable:", err);
+      cache.delete(url); // let a later visit retry after a transient failure
       return null;
     });
     cache.set(url, pending);

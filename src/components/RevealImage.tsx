@@ -16,6 +16,7 @@ const RevealImage = ({ src, alt, className = "", delay = 0 }: RevealImageProps) 
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
+    setRevealed(false);
 
     const observer = new IntersectionObserver(
       ([entry]) => {

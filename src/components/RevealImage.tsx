@@ -39,6 +39,20 @@ const RevealImage = ({ src, alt, className = "", delay = 0 }: RevealImageProps) 
   const clipStart = `polygon(-5% -5%, 105% -5%, 105% ${100 - offset + extra}%, -5% ${100 + offset + extra}%)`;
   const clipEnd = `polygon(-5% -5%, 105% -5%, 105% ${0 - offset - extra}%, -5% ${0 + offset - extra}%)`;
 
+  // Some items (e.g. videos added without a cover) have no image: show a branded placeholder.
+  if (!src) {
+    return (
+      <div
+        ref={containerRef}
+        role="img"
+        aria-label={alt}
+        className={`relative overflow-hidden flex items-center justify-center bg-gradient-to-br from-primary/25 via-card to-background ${className}`}
+      >
+        <span className="px-6 text-center font-display text-sm sm:text-base font-semibold text-foreground/70 line-clamp-2">{alt}</span>
+      </div>
+    );
+  }
+
   return (
     <div ref={containerRef} className={`relative overflow-hidden ${className}`}>
       <img src={src} alt={alt} className="w-full h-full object-cover" />

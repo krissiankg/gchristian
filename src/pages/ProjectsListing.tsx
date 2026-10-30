@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { usePortfolio } from "@/hooks/usePortfolio";
 import type { PortfolioItem, PortfolioKind } from "@/data/portfolioTypes";
+import { normalizeVideoEmbed, normalizeVideoSrc, VIDEO_IFRAME_ALLOW } from "@/lib/videoEmbed";
 
 type LightboxState = {
   images: string[];
@@ -243,14 +244,14 @@ const ProjectsListing = () => {
               {activeVideo.videoEmbed ? (
                 <div
                   className="w-full h-full relative [&>div]:!h-full [&>div]:!p-0 [&_iframe]:absolute [&_iframe]:inset-0 [&_iframe]:h-full [&_iframe]:w-full"
-                  dangerouslySetInnerHTML={{ __html: activeVideo.videoEmbed }}
+                  dangerouslySetInnerHTML={{ __html: normalizeVideoEmbed(activeVideo.videoEmbed) }}
                 />
               ) : activeVideo.videoUrl || activeVideo.live ? (
                 <iframe
-                  src={activeVideo.videoUrl || activeVideo.live}
+                  src={normalizeVideoSrc(activeVideo.videoUrl || activeVideo.live)}
                   title={activeVideo.title}
                   className="w-full h-full"
-                  allow="autoplay; fullscreen; picture-in-picture"
+                  allow={VIDEO_IFRAME_ALLOW}
                   allowFullScreen
                 />
               ) : (

@@ -16,7 +16,7 @@ export const SITE = {
   phone: "+229 01 66 36 87 05",
   phoneHref: "tel:+2290166368705",
   whatsapp: "+229 66 36 87 05",
-  whatsappHref: "https://wa.me/22966368705",
+  whatsappHref: "https://wa.me/2290166368705",
   location: {
     fr: "Disponible en remote / International",
     en: "Worldwide Remote",

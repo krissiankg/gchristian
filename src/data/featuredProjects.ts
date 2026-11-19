@@ -85,6 +85,40 @@ export const featuredWebOverrides: PortfolioItem[] = [
     featured: true,
   },
   {
+    id: "featured-immoconnect",
+    kind: "web",
+    title: "ImmoConnect — Prototype immobilier & construction",
+    category: "Prototype UX/UI",
+    description:
+      "Prototype bilingue pour acheter ou louer un logement, publier un bien ou lancer un projet de construction, réalisé avec Figma Make.",
+    summary: "Toutes ces démarches réunies dans un parcours unique, pensé mobile d'abord.",
+    objectifs: "Valider un concept de plateforme immobilière par un prototype interactif.",
+    image: shot("https://trill-dun-78912893.figma.site/"),
+    images: [shot("https://trill-dun-78912893.figma.site/")],
+    tags: ["Figma Make", "UX/UI", "Prototype"],
+    features: ["Achat / location", "Publication d'annonces", "Projets de construction", "Bilingue"],
+    live: "https://trill-dun-78912893.figma.site/",
+    year: "2026",
+    featured: false,
+  },
+  {
+    id: "featured-whos-the-bot",
+    kind: "web",
+    title: "Who's the bot? — Jeu social avec IA",
+    category: "Jeu web / IA",
+    description:
+      "L'hôte invite 3 à 6 joueurs avec un code de quatre lettres ou un lien. Chacun reçoit un pseudo anonyme et une couleur à chaque manche, et une IA se glisse parmi les humains : à vous de la démasquer.",
+    summary: "Un jeu de déduction en temps réel qui met à l'épreuve notre capacité à reconnaître une IA.",
+    objectifs: "Explorer une expérience ludique et sociale autour de l'IA conversationnelle.",
+    image: shot("https://whos-the-bot.krissiank.chatgpt.site/"),
+    images: [shot("https://whos-the-bot.krissiank.chatgpt.site/")],
+    tags: ["IA", "Temps réel", "Jeu"],
+    features: ["Salons par code ou lien", "Pseudos anonymes par manche", "Un joueur IA caché", "3 à 6 joueurs"],
+    live: "https://whos-the-bot.krissiank.chatgpt.site/",
+    year: "2026",
+    featured: false,
+  },
+  {
     id: "featured-exceltools-online",
     kind: "web",
     title: "ExcelTools — Automatisation de workflows Excel & CSV",
@@ -241,40 +275,6 @@ export const featuredWebOverrides: PortfolioItem[] = [
     year: "2021",
     featured: true,
   },
-  {
-    id: "featured-immoconnect",
-    kind: "web",
-    title: "ImmoConnect — Prototype immobilier & construction",
-    category: "Prototype UX/UI",
-    description:
-      "Prototype bilingue pour acheter ou louer un logement, publier un bien ou lancer un projet de construction, réalisé avec Figma Make.",
-    summary: "Toutes ces démarches réunies dans un parcours unique, pensé mobile d'abord.",
-    objectifs: "Valider un concept de plateforme immobilière par un prototype interactif.",
-    image: shot("https://trill-dun-78912893.figma.site/"),
-    images: [shot("https://trill-dun-78912893.figma.site/")],
-    tags: ["Figma Make", "UX/UI", "Prototype"],
-    features: ["Achat / location", "Publication d'annonces", "Projets de construction", "Bilingue"],
-    live: "https://trill-dun-78912893.figma.site/",
-    year: "2026",
-    featured: false,
-  },
-  {
-    id: "featured-whos-the-bot",
-    kind: "web",
-    title: "Who's the bot? — Jeu social avec IA",
-    category: "Jeu web / IA",
-    description:
-      "L'hôte invite 3 à 6 joueurs avec un code de quatre lettres ou un lien. Chacun reçoit un pseudo anonyme et une couleur à chaque manche, et une IA se glisse parmi les humains : à vous de la démasquer.",
-    summary: "Un jeu de déduction en temps réel qui met à l'épreuve notre capacité à reconnaître une IA.",
-    objectifs: "Explorer une expérience ludique et sociale autour de l'IA conversationnelle.",
-    image: shot("https://whos-the-bot.krissiank.chatgpt.site/"),
-    images: [shot("https://whos-the-bot.krissiank.chatgpt.site/")],
-    tags: ["IA", "Temps réel", "Jeu"],
-    features: ["Salons par code ou lien", "Pseudos anonymes par manche", "Un joueur IA caché", "3 à 6 joueurs"],
-    live: "https://whos-the-bot.krissiank.chatgpt.site/",
-    year: "2026",
-    featured: false,
-  },
 ];
 
 function hostOf(url: string) {
@@ -286,7 +286,19 @@ function hostOf(url: string) {
 }
 
 const overrideHosts = new Set(featuredWebOverrides.map((p) => hostOf(p.live)).filter(Boolean));
-const overrideKeywords = ["snb", "nutrition", "buscord", "spass", "openway", "forge", "exceltools", "jsan"];
+const overrideKeywords = [
+  "snb",
+  "nutrition",
+  "buscord",
+  "spass",
+  "openway",
+  "forge",
+  "exceltools",
+  "jsan",
+  "guelichweb",
+  "immoconnect",
+  "who's the bot",
+];
 
 /** Replace overlapping Supabase rows (same site or same project name) with the curated versions. */
 export function mergeFeaturedWebProjects(apiWeb: PortfolioItem[]): PortfolioItem[] {

@@ -90,7 +90,7 @@ const fr = {
     ],
     educationLabel: "Formation",
     education: [
-      { year: "En cours", title: "Bachelor (L1) — Formation certifiante", school: "University of Maryland Global Campus (UMGC)" },
+      { year: "En cours", title: "Formation certifiante, hors cursus diplômant — Bachelor (L1, BAC+1)", school: "University of Maryland Global Campus (UMGC)" },
       { year: "2010", title: "Études universitaires", school: "Université d'Abomey-Calavi (UAC)" },
       { year: "2008", title: "Enseignement secondaire", school: "CEG 1 Abomey-Calavi" },
     ],
@@ -300,7 +300,7 @@ const en: TranslationTree = {
     ],
     educationLabel: "Education",
     education: [
-      { year: "Ongoing", title: "Bachelor (year 1) — Not degree-seeking undergraduate", school: "University of Maryland Global Campus (UMGC)" },
+      { year: "Ongoing", title: "Certificate program, non-degree-seeking undergraduate — Bachelor (year 1)", school: "University of Maryland Global Campus (UMGC)" },
       { year: "2010", title: "University studies", school: "University of Abomey-Calavi (UAC)" },
       { year: "2008", title: "Secondary school", school: "CEG 1 Abomey-Calavi" },
     ],

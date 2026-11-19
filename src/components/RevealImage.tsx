@@ -10,6 +10,7 @@ interface RevealImageProps {
 const RevealImage = ({ src, alt, className = "", delay = 0 }: RevealImageProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [revealed, setRevealed] = useState(false);
+  const [failed, setFailed] = useState(false);
   const randomDelay = useRef(Math.random() * 0.4);
   const angle = useRef((Math.random() - 0.5) * 60);
 
@@ -17,6 +18,7 @@ const RevealImage = ({ src, alt, className = "", delay = 0 }: RevealImageProps) 
     const el = containerRef.current;
     if (!el) return;
     setRevealed(false);
+    setFailed(false);
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -41,8 +43,8 @@ const RevealImage = ({ src, alt, className = "", delay = 0 }: RevealImageProps) 
   const clipStart = `polygon(-5% -5%, 105% -5%, 105% ${100 - offset + extra}%, -5% ${100 + offset + extra}%)`;
   const clipEnd = `polygon(-5% -5%, 105% -5%, 105% ${0 - offset - extra}%, -5% ${0 + offset - extra}%)`;
 
-  // Some items (e.g. videos added without a cover) have no image: show a branded placeholder.
-  if (!src) {
+  // Items without a cover, or whose cover fails to load, get a branded placeholder.
+  if (!src || failed) {
     return (
       <div
         ref={containerRef}
@@ -57,7 +59,7 @@ const RevealImage = ({ src, alt, className = "", delay = 0 }: RevealImageProps) 
 
   return (
     <div ref={containerRef} className={`relative overflow-hidden ${className}`}>
-      <img src={src} alt={alt} className="w-full h-full object-cover" />
+      <img src={src} alt={alt} className="w-full h-full object-cover" onError={() => setFailed(true)} />
 
       {/* drop-shadow creates a glow along the clip-path edge, moving perfectly with it */}
       <div

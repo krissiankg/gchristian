@@ -18,6 +18,13 @@ export type PortfolioBundle = {
 /** Past this delay, show the curated projects instead of waiting on Supabase. */
 const SUPABASE_TIMEOUT_MS = 8000;
 
+/** AbortSignal.timeout is missing on older Safari (< 16), so build it by hand. */
+function timeoutSignal(ms: number): AbortSignal {
+  const controller = new AbortController();
+  setTimeout(() => controller.abort(), ms);
+  return controller.signal;
+}
+
 let cache: PortfolioBundle | null = null;
 let inflight: Promise<PortfolioBundle> | null = null;
 
@@ -33,25 +40,25 @@ export async function fetchPortfolio(force = false): Promise<PortfolioBundle> {
         .eq("is_visible", true)
         .eq("portfolio_type", "web_app")
         .order("order_index", { ascending: true })
-        .abortSignal(AbortSignal.timeout(SUPABASE_TIMEOUT_MS)),
+        .abortSignal(timeoutSignal(SUPABASE_TIMEOUT_MS)),
       supabase
         .from("portfolio_projects")
         .select("*")
         .eq("is_visible", true)
         .eq("portfolio_type", "graphic_design")
         .order("order_index", { ascending: true })
-        .abortSignal(AbortSignal.timeout(SUPABASE_TIMEOUT_MS)),
+        .abortSignal(timeoutSignal(SUPABASE_TIMEOUT_MS)),
       supabase
         .from("video_portfolio")
         .select("*")
         .eq("is_visible", true)
         .order("order_index", { ascending: true })
-        .abortSignal(AbortSignal.timeout(SUPABASE_TIMEOUT_MS)),
+        .abortSignal(timeoutSignal(SUPABASE_TIMEOUT_MS)),
     ]);
 
-    // Curated projects ship with the site, so a Supabase outage only hides the extra rows.
+    // Web projects fall back to the curated list; graphic and video rows are hidden on error.
     const failed = [webRes.error, graphicRes.error, videoRes.error].filter(Boolean);
-    if (failed.length === 3) console.warn("Supabase unavailable, showing curated projects only", failed[0]);
+    failed.forEach((error) => console.warn("Supabase query failed", error));
 
     const webFromApi = ((webRes.error ? [] : webRes.data || []) as PortfolioProjectRow[]).map(mapProjectRow);
     // Align with offre.guelichweb.online featured mocks (desired up-to-date versions)
@@ -65,7 +72,8 @@ export async function fetchPortfolio(force = false): Promise<PortfolioBundle> {
       video,
       all: [...web, ...graphic, ...video],
     };
-    cache = bundle;
+    // Don't cache a partial result, so the next page load can retry the failed queries.
+    if (!failed.length) cache = bundle;
     return bundle;
   })();
 

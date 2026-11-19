@@ -286,6 +286,7 @@ const ProjectsListing = () => {
                 />
               ) : /\.(mp4|webm)(\?|$)/i.test(activeVideo.videoUrl || "") ? (
                 <video
+                  aria-label={activeVideo.title}
                   src={activeVideo.videoUrl}
                   poster={activeVideo.image || undefined}
                   className="w-full h-full"

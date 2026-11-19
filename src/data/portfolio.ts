@@ -25,6 +25,11 @@ function timeoutSignal(ms: number): AbortSignal {
   return controller.signal;
 }
 
+/** Drop Supabase rows that duplicate a curated graphic or video (matched by title). */
+function withoutCurated(items: PortfolioItem[], keys: string[]) {
+  return items.filter((item) => !keys.some((key) => item.title.toLowerCase().includes(key)));
+}
+
 let cache: PortfolioBundle | null = null;
 let inflight: Promise<PortfolioBundle> | null = null;
 
@@ -65,11 +70,17 @@ export async function fetchPortfolio(force = false): Promise<PortfolioBundle> {
     const web = mergeFeaturedWebProjects(webFromApi);
     const graphic = [
       ...featuredGraphic,
-      ...((graphicRes.error ? [] : graphicRes.data || []) as PortfolioProjectRow[]).map(mapProjectRow),
+      ...withoutCurated(
+        ((graphicRes.error ? [] : graphicRes.data || []) as PortfolioProjectRow[]).map(mapProjectRow),
+        ["portail vers l"]
+      ),
     ];
     const video = [
       ...featuredVideo,
-      ...((videoRes.error ? [] : videoRes.data || []) as VideoPortfolioRow[]).map(mapVideoRow),
+      ...withoutCurated(
+        ((videoRes.error ? [] : videoRes.data || []) as VideoPortfolioRow[]).map(mapVideoRow),
+        ["halloween"]
+      ),
     ];
 
     const bundle: PortfolioBundle = {

@@ -15,6 +15,9 @@ export type PortfolioBundle = {
   all: PortfolioItem[];
 };
 
+/** Past this delay, show the curated projects instead of waiting on Supabase. */
+const SUPABASE_TIMEOUT_MS = 8000;
+
 let cache: PortfolioBundle | null = null;
 let inflight: Promise<PortfolioBundle> | null = null;
 
@@ -29,29 +32,32 @@ export async function fetchPortfolio(force = false): Promise<PortfolioBundle> {
         .select("*")
         .eq("is_visible", true)
         .eq("portfolio_type", "web_app")
-        .order("order_index", { ascending: true }),
+        .order("order_index", { ascending: true })
+        .abortSignal(AbortSignal.timeout(SUPABASE_TIMEOUT_MS)),
       supabase
         .from("portfolio_projects")
         .select("*")
         .eq("is_visible", true)
         .eq("portfolio_type", "graphic_design")
-        .order("order_index", { ascending: true }),
+        .order("order_index", { ascending: true })
+        .abortSignal(AbortSignal.timeout(SUPABASE_TIMEOUT_MS)),
       supabase
         .from("video_portfolio")
         .select("*")
         .eq("is_visible", true)
-        .order("order_index", { ascending: true }),
+        .order("order_index", { ascending: true })
+        .abortSignal(AbortSignal.timeout(SUPABASE_TIMEOUT_MS)),
     ]);
 
-    if (webRes.error) throw webRes.error;
-    if (graphicRes.error) throw graphicRes.error;
-    if (videoRes.error) throw videoRes.error;
+    // Curated projects ship with the site, so a Supabase outage only hides the extra rows.
+    const failed = [webRes.error, graphicRes.error, videoRes.error].filter(Boolean);
+    if (failed.length === 3) console.warn("Supabase unavailable, showing curated projects only", failed[0]);
 
-    const webFromApi = ((webRes.data || []) as PortfolioProjectRow[]).map(mapProjectRow);
+    const webFromApi = ((webRes.error ? [] : webRes.data || []) as PortfolioProjectRow[]).map(mapProjectRow);
     // Align with offre.guelichweb.online featured mocks (desired up-to-date versions)
     const web = mergeFeaturedWebProjects(webFromApi);
-    const graphic = ((graphicRes.data || []) as PortfolioProjectRow[]).map(mapProjectRow);
-    const video = ((videoRes.data || []) as VideoPortfolioRow[]).map(mapVideoRow);
+    const graphic = ((graphicRes.error ? [] : graphicRes.data || []) as PortfolioProjectRow[]).map(mapProjectRow);
+    const video = ((videoRes.error ? [] : videoRes.data || []) as VideoPortfolioRow[]).map(mapVideoRow);
 
     const bundle: PortfolioBundle = {
       web,

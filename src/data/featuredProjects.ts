@@ -119,6 +119,42 @@ export const featuredWebOverrides: PortfolioItem[] = [
     featured: false,
   },
   {
+    id: "featured-learnia",
+    kind: "web",
+    title: "LearnIA — Parcours d'apprentissage générés par l'IA",
+    category: "Concept EdTech / IA",
+    description:
+      "LearnIA est un concept de plateforme d'apprentissage qui transforme les meilleures vidéos éducatives YouTube en parcours structurés.",
+    summary:
+      "L'utilisateur choisit un sujet (par exemple l'automatisation avec n8n) et obtient un parcours en plusieurs étapes, avec une sélection de vidéos faite par l'IA.",
+    objectifs: "Aider à apprendre plus vite, sans se perdre dans la masse de contenus disponibles en ligne.",
+    image: shot("https://guegueligue-christian.vercel.app/"),
+    images: [shot("https://guegueligue-christian.vercel.app/")],
+    tags: ["IA", "EdTech", "YouTube API", "Vercel"],
+    features: ["Choix d'un sujet", "Parcours en étapes", "Sélection de vidéos par l'IA", "Landing page responsive"],
+    live: "https://guegueligue-christian.vercel.app/",
+    year: "2026",
+    featured: false,
+  },
+  {
+    id: "featured-portfolio-dev",
+    kind: "web",
+    title: "Portfolio développeur web — Débogage, tests & développement assisté par l'IA",
+    category: "Portfolio",
+    description:
+      "Portfolio conçu pour présenter mon travail en développement web, débogage et tests.",
+    summary:
+      "Il met en avant la plateforme d'examens réalisée pour Spass mit Deutsch avec Next.js, React et Prisma, ainsi que ma démarche de développement assisté par l'IA.",
+    objectifs: "Montrer concrètement mes compétences de développeur à des recruteurs.",
+    image: shot("https://rococo-sfogliatella-429312.netlify.app/"),
+    images: [shot("https://rococo-sfogliatella-429312.netlify.app/")],
+    tags: ["Next.js", "React", "Prisma", "Tests"],
+    features: ["Études de cas détaillées", "Débogage et tests", "Développement assisté par l'IA", "Déployé sur Netlify"],
+    live: "https://rococo-sfogliatella-429312.netlify.app/",
+    year: "2026",
+    featured: false,
+  },
+  {
     id: "featured-exceltools-online",
     kind: "web",
     title: "ExcelTools — Automatisation de workflows Excel & CSV",
@@ -277,6 +313,51 @@ export const featuredWebOverrides: PortfolioItem[] = [
   },
 ];
 
+/** Graphic design pieces from the LinkedIn profile, hosted with the site. */
+export const featuredGraphic: PortfolioItem[] = [
+  {
+    id: "featured-forge-ia-portail",
+    kind: "graphic",
+    title: "FORGE IA — Visuel « Portail vers l'avenir »",
+    category: "Design graphique / Campagne",
+    description:
+      "Visuel promotionnel pour FORGE IA, la formation en IA et développement web : « Digital is evolving. Are you? ».",
+    summary:
+      "Contenu promotionnel réalisé avec un guide de voix rédactionnelle créé avec ChatGPT à partir de mes propres textes, puis décliné en visuels pour la campagne FORGE IA.",
+    objectifs: "Donner envie de rejoindre la formation et pousser à la prise de contact.",
+    image: "/portfolio/forge-ia-portail-vers-lavenir.jpg",
+    images: ["/portfolio/forge-ia-portail-vers-lavenir.jpg"],
+    tags: ["Design", "IA générative", "Campagne"],
+    features: [],
+    live: "https://forgeia.site/",
+    year: "2026",
+    featured: true,
+  },
+];
+
+/** Videos from the LinkedIn profile, hosted with the site. */
+export const featuredVideo: PortfolioItem[] = [
+  {
+    id: "featured-halloween-handshake",
+    kind: "video",
+    title: "Animate Halloween Handshake",
+    category: "Motion design",
+    description:
+      "Hex-H, le costume d'Halloween du logo Handshake : un chapeau de sorcière en velours violet tombe sur le H, des boulons argentés surgissent avec des éclairs verts et des chauves-souris tournoient sur un ciel violet.",
+    summary: "",
+    objectifs: "",
+    image: "/portfolio/halloween-handshake.jpg",
+    images: ["/portfolio/halloween-handshake.jpg"],
+    tags: ["Motion design", "Animation 3D"],
+    features: [],
+    live: "/portfolio/halloween-handshake.mp4",
+    year: "2026",
+    featured: true,
+    videoUrl: "/portfolio/halloween-handshake.mp4",
+    videoPlatform: "mp4",
+  },
+];
+
 function hostOf(url: string) {
   try {
     return new URL(url).hostname.replace(/^www\./, "");
@@ -298,6 +379,7 @@ const overrideKeywords = [
   "guelichweb",
   "immoconnect",
   "who's the bot",
+  "learnia",
 ];
 
 /** Replace overlapping Supabase rows (same site or same project name) with the curated versions. */

@@ -284,6 +284,15 @@ const ProjectsListing = () => {
                   className="w-full h-full relative [&>div]:!h-full [&>div]:!p-0 [&_iframe]:absolute [&_iframe]:inset-0 [&_iframe]:h-full [&_iframe]:w-full"
                   dangerouslySetInnerHTML={{ __html: normalizeVideoEmbed(activeVideo.videoEmbed) }}
                 />
+              ) : /\.(mp4|webm)(\?|$)/i.test(activeVideo.videoUrl || "") ? (
+                <video
+                  src={activeVideo.videoUrl}
+                  poster={activeVideo.image || undefined}
+                  className="w-full h-full"
+                  controls
+                  autoPlay
+                  playsInline
+                />
               ) : activeVideo.videoUrl || activeVideo.live ? (
                 <iframe
                   src={normalizeVideoSrc(activeVideo.videoUrl || activeVideo.live)}

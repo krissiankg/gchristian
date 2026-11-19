@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { mergeFeaturedWebProjects } from "@/data/featuredProjects";
+import { featuredGraphic, featuredVideo, mergeFeaturedWebProjects } from "@/data/featuredProjects";
 import {
   mapProjectRow,
   mapVideoRow,
@@ -63,8 +63,14 @@ export async function fetchPortfolio(force = false): Promise<PortfolioBundle> {
     const webFromApi = ((webRes.error ? [] : webRes.data || []) as PortfolioProjectRow[]).map(mapProjectRow);
     // Align with offre.guelichweb.online featured mocks (desired up-to-date versions)
     const web = mergeFeaturedWebProjects(webFromApi);
-    const graphic = ((graphicRes.error ? [] : graphicRes.data || []) as PortfolioProjectRow[]).map(mapProjectRow);
-    const video = ((videoRes.error ? [] : videoRes.data || []) as VideoPortfolioRow[]).map(mapVideoRow);
+    const graphic = [
+      ...featuredGraphic,
+      ...((graphicRes.error ? [] : graphicRes.data || []) as PortfolioProjectRow[]).map(mapProjectRow),
+    ];
+    const video = [
+      ...featuredVideo,
+      ...((videoRes.error ? [] : videoRes.data || []) as VideoPortfolioRow[]).map(mapVideoRow),
+    ];
 
     const bundle: PortfolioBundle = {
       web,

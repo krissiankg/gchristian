@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { mergeFeaturedWebProjects } from "@/data/featuredProjects";
+import { featuredGraphic, featuredVideo, mergeFeaturedWebProjects } from "@/data/featuredProjects";
 import {
   mapProjectRow,
   mapVideoRow,
@@ -15,6 +15,21 @@ export type PortfolioBundle = {
   all: PortfolioItem[];
 };
 
+/** Past this delay, show the curated projects instead of waiting on Supabase. */
+const SUPABASE_TIMEOUT_MS = 8000;
+
+/** AbortSignal.timeout is missing on older Safari (< 16), so build it by hand. */
+function timeoutSignal(ms: number): AbortSignal {
+  const controller = new AbortController();
+  setTimeout(() => controller.abort(), ms);
+  return controller.signal;
+}
+
+/** Drop Supabase rows that duplicate a curated graphic or video (matched by title). */
+function withoutCurated(items: PortfolioItem[], keys: string[]) {
+  return items.filter((item) => !keys.some((key) => item.title.toLowerCase().includes(key)));
+}
+
 let cache: PortfolioBundle | null = null;
 let inflight: Promise<PortfolioBundle> | null = null;
 
@@ -29,29 +44,44 @@ export async function fetchPortfolio(force = false): Promise<PortfolioBundle> {
         .select("*")
         .eq("is_visible", true)
         .eq("portfolio_type", "web_app")
-        .order("order_index", { ascending: true }),
+        .order("order_index", { ascending: true })
+        .abortSignal(timeoutSignal(SUPABASE_TIMEOUT_MS)),
       supabase
         .from("portfolio_projects")
         .select("*")
         .eq("is_visible", true)
         .eq("portfolio_type", "graphic_design")
-        .order("order_index", { ascending: true }),
+        .order("order_index", { ascending: true })
+        .abortSignal(timeoutSignal(SUPABASE_TIMEOUT_MS)),
       supabase
         .from("video_portfolio")
         .select("*")
         .eq("is_visible", true)
-        .order("order_index", { ascending: true }),
+        .order("order_index", { ascending: true })
+        .abortSignal(timeoutSignal(SUPABASE_TIMEOUT_MS)),
     ]);
 
-    if (webRes.error) throw webRes.error;
-    if (graphicRes.error) throw graphicRes.error;
-    if (videoRes.error) throw videoRes.error;
+    // Web projects fall back to the curated list; graphic and video rows are hidden on error.
+    const failed = [webRes.error, graphicRes.error, videoRes.error].filter(Boolean);
+    failed.forEach((error) => console.warn("Supabase query failed", error));
 
-    const webFromApi = ((webRes.data || []) as PortfolioProjectRow[]).map(mapProjectRow);
+    const webFromApi = ((webRes.error ? [] : webRes.data || []) as PortfolioProjectRow[]).map(mapProjectRow);
     // Align with offre.guelichweb.online featured mocks (desired up-to-date versions)
     const web = mergeFeaturedWebProjects(webFromApi);
-    const graphic = ((graphicRes.data || []) as PortfolioProjectRow[]).map(mapProjectRow);
-    const video = ((videoRes.data || []) as VideoPortfolioRow[]).map(mapVideoRow);
+    const graphic = [
+      ...featuredGraphic,
+      ...withoutCurated(
+        ((graphicRes.error ? [] : graphicRes.data || []) as PortfolioProjectRow[]).map(mapProjectRow),
+        ["portail vers l", "25 days", "four icons"]
+      ),
+    ];
+    const video = [
+      ...featuredVideo,
+      ...withoutCurated(
+        ((videoRes.error ? [] : videoRes.data || []) as VideoPortfolioRow[]).map(mapVideoRow),
+        ["halloween"]
+      ),
+    ];
 
     const bundle: PortfolioBundle = {
       web,
@@ -59,7 +89,8 @@ export async function fetchPortfolio(force = false): Promise<PortfolioBundle> {
       video,
       all: [...web, ...graphic, ...video],
     };
-    cache = bundle;
+    // Don't cache a partial result, so the next page load can retry the failed queries.
+    if (!failed.length) cache = bundle;
     return bundle;
   })();
 

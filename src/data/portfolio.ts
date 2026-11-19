@@ -72,7 +72,7 @@ export async function fetchPortfolio(force = false): Promise<PortfolioBundle> {
       ...featuredGraphic,
       ...withoutCurated(
         ((graphicRes.error ? [] : graphicRes.data || []) as PortfolioProjectRow[]).map(mapProjectRow),
-        ["portail vers l"]
+        ["portail vers l", "25 days", "four icons"]
       ),
     ];
     const video = [

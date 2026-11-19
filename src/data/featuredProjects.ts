@@ -333,6 +333,41 @@ export const featuredGraphic: PortfolioItem[] = [
     year: "2026",
     featured: true,
   },
+  {
+    id: "featured-forgeia-25-days",
+    kind: "graphic",
+    title: "25 Days to Go — Le compte à rebours de FORGE IA",
+    category: "Design graphique / Fond d'écran",
+    description:
+      "Fond d'écran de verrouillage conçu pour garder ma roadmap sous les yeux pendant les 25 jours avant le lancement du bootcamp IA & code FORGE IA, le 30 novembre.",
+    summary:
+      "Compte à rebours, étapes clés (programme validé, supports, tests assistés par l'IA, répétition, onboarding des apprenants) et étape en cours mise en avant. Réalisé avec Gemini.",
+    objectifs: "Rester concentré sur chaque étape de la préparation jusqu'au jour J.",
+    image: "/portfolio/forgeia-25-days-to-go.jpg",
+    images: ["/portfolio/forgeia-25-days-to-go.jpg"],
+    tags: ["Design", "Gemini", "Planification"],
+    features: [],
+    live: "https://forgeia.site/",
+    year: "2026",
+    featured: true,
+  },
+  {
+    id: "featured-four-icons",
+    kind: "graphic",
+    title: "Four Icons That Draw Themselves | Figma Motion",
+    category: "Motion design / Figma",
+    description:
+      "Quatre icônes au trait créées dans Figma : un bouton d'alimentation, une flèche, un micro et un symbole infini. Chaque tracé se dessine progressivement grâce à une animation trim path.",
+    summary: "Animation réalisée dans la timeline de Figma Motion, avec des keyframes décalées pour un dessin en séquence.",
+    objectifs: "Explorer l'animation d'icônes directement dans Figma.",
+    image: "/portfolio/four-icons-draw-themselves.gif",
+    images: ["/portfolio/four-icons-draw-themselves.gif", "/portfolio/four-icons-figma-timeline.jpg"],
+    tags: ["Figma", "Motion design", "Icônes"],
+    features: [],
+    live: "",
+    year: "2026",
+    featured: true,
+  },
 ];
 
 /** Videos from the LinkedIn profile, hosted with the site. */

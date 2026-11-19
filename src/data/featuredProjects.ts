@@ -179,24 +179,6 @@ export const featuredWebOverrides: PortfolioItem[] = [
     featured: true,
   },
   {
-    id: "featured-exceltools-site",
-    kind: "web",
-    title: "ExcelTools.site — Suite d'outils Excel, CSV, JSON et XML",
-    category: "Outils web gratuits",
-    description:
-      "Suite complète d'outils web gratuits pour gérer et convertir des fichiers Excel, CSV, JSON et XML.",
-    summary:
-      "Développement front-end en HTML, CSS et JavaScript d'une collection d'outils de conversion et de manipulation de fichiers, utilisables directement en ligne.",
-    objectifs: "Proposer des utilitaires simples et rapides pour les conversions de fichiers du quotidien.",
-    image: shot("https://www.exceltools.site/"),
-    images: [shot("https://www.exceltools.site/")],
-    tags: ["HTML", "CSS", "JavaScript"],
-    features: ["Conversion Excel ⇄ CSV ⇄ JSON ⇄ XML", "Outils de nettoyage de données", "100 % en ligne et gratuit"],
-    live: "https://www.exceltools.site/",
-    year: "2025",
-    featured: true,
-  },
-  {
     id: "featured-guelichweb",
     kind: "web",
     title: "Guelichweb — Plateforme web & vitrine digitale",
